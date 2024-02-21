@@ -34,19 +34,44 @@ void Led_Control::Periodic() {
     }
 
 }
-    void Led_Control::HandleIntakeState() {
-        switch (m_intakeState)
-        {
-        case NO_NOTE:
-            candle.SetLEDs(255, 0, 0);
-            break;
-        
-        case NOTE:
-            candle.SetLEDs(0, 255, 0);
-            break;
 
-        default:
-            candle.SetLEDs(255, 255, 255);
-            break;
-        }
+void Led_Control::HandleIntakeState() {
+    switch (m_intakeState)
+    {
+    case NO_NOTE:
+        candle.SetLEDs(255, 0, 0);
+        break;
+    
+    case NOTE:
+        candle.SetLEDs(0, 255, 0);
+        break;
+
+    default:
+        candle.SetLEDs(255, 255, 255);
+        break;
     }
+}
+
+void Led_Control::HandleShooterState(){
+    switch (m_shooterState)
+    {
+    case NO_SHOT:
+        candle.SetLEDs(255, 0, 0);
+        break;
+    
+    case SPIN_UP:
+        candle.SetLEDs(255, 255, 0);
+        break;
+
+    case SHOOTING:
+        candle.SetLEDs(0, 255, 0);
+        break;
+        
+    case BAD:
+        candle.SetLEDs(0, 255, 255);
+        break;
+    default:
+        candle.SetLEDs(255, 255, 255);
+        break;
+    }
+}

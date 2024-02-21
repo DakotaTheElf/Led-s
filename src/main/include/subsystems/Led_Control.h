@@ -13,7 +13,7 @@ enum LightState
 {
   DEFAULT,
   INTAKE,
-  SHOOTING
+  SHOOT
 };
 
 enum IntakeState
@@ -28,12 +28,15 @@ enum ShooterState
   NO_SHOT,  // Orange
   SPIN_UP,  // Yellow
   SHOOTING,  //Green
-  NO_NOTE  //Blinking Red
+  BAD  //Blinking Red
 };
 
 class Led_Control : public frc2::SubsystemBase {
  public:
   Led_Control();
+  void HandleIntakeState();
+  void HandleShooterState();
+
 
   ctre::phoenix::led::CANdle candle {9};
 
@@ -49,11 +52,9 @@ class Led_Control : public frc2::SubsystemBase {
  bool P_state;
  bool C_state;
 
- void HandleIntakeState();
-
  LightState m_lightState = LightState::DEFAULT;
  IntakeState m_intakeState = IntakeState::NO_NOTE;
- ShooterState m_shooterState = ShooterState::NO_NOTE;
+ ShooterState m_shooterState = ShooterState::BAD;
 
   // Components (e.g. motor controllers and sensors) should generally be
   // declared private and exposed only through public methods.
