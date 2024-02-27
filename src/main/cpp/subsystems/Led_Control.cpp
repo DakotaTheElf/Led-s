@@ -5,12 +5,17 @@
 #include "subsystems/Led_Control.h"
 
 
-Led_Control::Led_Control() = default;
+Led_Control::Led_Control() 
+{
+    // Setup i vectors ie. {1-10, 20-30}, {11-19, 31-40}
+}
+
 
 // This method will be called once per scheduler run
 void Led_Control::Periodic() {
     // True = Green
     // False = Defult
+    
     P_state = C_state;
     if(Switch.Get()){
         C_state = true;
@@ -24,15 +29,17 @@ void Led_Control::Periodic() {
     {
         if(!C_state)
         {
-            candle.SetLEDs(0, 255, 0);
+            
         }
 
         if(C_state)
         {
-            candle.SetLEDs(0, 0, 255);
+
         }
     }
 
+    m_shooterState = SHOOTING;
+    HandleShooterState();
 }
 
 void Led_Control::HandleIntakeState() {
@@ -56,22 +63,30 @@ void Led_Control::HandleShooterState(){
     switch (m_shooterState)
     {
     case NO_SHOT:
-        candle.SetLEDs(255, 0, 0);
+        candle.SetLEDs(255, 0, 0); //Red
         break;
     
     case SPIN_UP:
-        candle.SetLEDs(255, 255, 0);
+        AllLEDs.SetScrollingGradient(255, 0, 0, 19);
+        // candle.SetLEDs(255, 255, 0); //Yellow
         break;
 
     case SHOOTING:
-        candle.SetLEDs(0, 255, 0);
+        // ledGroup1.SetLarson(255, 30, 0, 3);
+        // ledGroup2.SetLarson(255, 30, 0, 3); //Larson
+        // ledGroup3.SetLarson(255, 30, 0, 3);
+        ledGroup4.SetLarson(255, 30, 0, 3);
         break;
         
     case BAD:
-        candle.SetLEDs(0, 255, 255);
+        AllLEDs.SetFlash(255, 0, 0, 255, 30, 0, Time);
         break;
     default:
         candle.SetLEDs(255, 255, 255);
         break;
     }
 }
+
+
+
+//Gradient Code:
