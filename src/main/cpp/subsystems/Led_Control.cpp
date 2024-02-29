@@ -16,27 +16,27 @@ void Led_Control::Periodic() {
     // True = Green
     // False = Defult
     
-    P_state = C_state;
-    if(Switch.Get()){
-        C_state = true;
-    }
-    else
-    {
-        C_state = false;
-    }
+    // P_state = C_state;
+    // if(Switch.Get()){
+    //     C_state = true;
+    // }
+    // else
+    // {
+    //     C_state = false;
+    // }
 
-    if(P_state != C_state)
-    {
-        if(!C_state)
-        {
+    // if(P_state != C_state)
+    // {
+    //     if(!C_state)
+    //     {
             
-        }
+    //     }
 
-        if(C_state)
-        {
+    //     if(C_state)
+    //     {
 
-        }
-    }
+    //     }
+    // }
 
     m_shooterState = SHOOTING;
     HandleShooterState();
@@ -67,17 +67,17 @@ void Led_Control::HandleShooterState(){
         break;
     
     case SPIN_UP:
-        AllLEDs.SetScrollingGradient(255, 0, 0, 19);
-        // candle.SetLEDs(255, 255, 0); //Yellow
+        candle.SetLEDs(255, 255, 0); //Yellow
         break;
 
     case SHOOTING:
         // ledGroup1.SetLarson(255, 30, 0, 3);
-        // ledGroup2.SetLarson(255, 30, 0, 3); //Larson
+        // ledGroup2.SetLarson(255, 30, 0, 3);
         // ledGroup3.SetLarson(255, 30, 0, 3);
-        ledGroup4.SetLarson(255, 30, 0, 3);
+        // ledGroup4.SetLarson(255, 30, 0, 3);
+        // ledGroup4.SetFlash(255,255,255,0,0,0,Time);
+        ledGroup1.SetScrollingGradient(255, 100, 0, 0, 100, 255, 25);
         break;
-        
     case BAD:
         AllLEDs.SetFlash(255, 0, 0, 255, 30, 0, Time);
         break;

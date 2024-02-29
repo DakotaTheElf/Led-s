@@ -5,6 +5,8 @@
 #include <frc2/command/CommandScheduler.h>
 #include "Robot.h"
 #include "subsystems/Led_Control.h"
+#include <frc/smartdashboard/SmartDashboard.h>
+
 
 void Robot::RobotInit() {
   LEDs.Periodic();

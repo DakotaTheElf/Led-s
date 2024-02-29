@@ -5,6 +5,8 @@
 #include "subsystems/LED_Groups.h"
 #include <ctre/phoenix/led/Animation.h>
 #include <ctre/phoenix/led/LarsonAnimation.h>
+#include <frc/smartdashboard/SmartDashboard.h>
+
 
 void LED_Group::SetColor(int _r, int _g, int _b)
 {
@@ -56,35 +58,87 @@ void LED_Group::SetFlash(int _r, int _g, int _b, int r, int g, int b, units::tim
     }
 }
 
-void LED_Group::SetScrollingGradient(int _r, int _g, int _b, int LedNum)
+void LED_Group::SetGradient(int _r, int _g, int _b, int _R, int _G, int _B, int LedNum)
 {
+    int r = _r;
+    int g = _g;
     int b = _b;
+    int R = _R;
+    int G = _G;
+    int B = _B;
+
+    int _rStep;
+    int _gStep;
+    int _bStep;
+
+    int RStep;
+    int GStep;
+    int BStep;
+
+    int i = 0;
+
+    _rStep = r - R;
+    _gStep = g - G;
+    _bStep = b - B;
+
+    RStep = _rStep/LedNum;
+    GStep = _gStep/LedNum;
+    BStep = _bStep/LedNum;
+
+    for(i = 0; i <= LedNum; i++)
+    {
+        _candle->SetLEDs(r, g, b, 0, i + 8, 1);
+        
+        r -= RStep;
+        g -= GStep;
+        b -= BStep;
+    }
+}
+
+void LED_Group::SetScrollingGradient(int _r, int _g, int _b, int _R, int _G, int _B, int LedNum)
+{
+    int a;
+    for(a = 0; a <= LedNum; a++)
+    {
         int r = _r;
-        int i = 0;
-        for(i = 0; i <= 104; i++)
+        int g = _g;
+        int b = _b;
+        int R = _R;
+        int G = _G;
+        int B = _B;
+
+        int _rStep;
+        int _gStep;
+        int _bStep;
+
+        int RStep;
+        int GStep;
+        int BStep;
+
+        int i;
+
+        _rStep = r - R;
+        _gStep = g - G;
+        _bStep = b - B;
+
+        RStep = _rStep/LedNum;
+        GStep = _gStep/LedNum;
+        BStep = _bStep/LedNum;
+
+        if(i >= LedNum)
         {
-            _candle->SetLEDs(r, _g, b, 0, i, 1);
-            r -= 2;
-            b += 2;
+            Offset += 1;
+            r = (RStep * Offset) + r;
+            frc::SmartDashboard::PutBoolean("TEST", true);
         }
-    
-    // int R = _r;
-    // int G = _g;
-    // int B = _b;
-    // int i = 0;
 
-    // StepR = _r / LedNum;
-    // StepG = _g / LedNum;
-    // StepB = _b / LedNum;
-    
-    //     for(i = 0; i <= 104; i++)
-    //     {
-    //         _candle->SetLEDs(R, G, B, 0, i, 1);
-
-
-
-    //         r -= StepR;
-    //         g -= StepG;
-    //         b += StepB;
-    //     }
+        for(i = 0; i <= LedNum; i++)
+        {
+            _candle->SetLEDs(r, g, b, 0, i + 8, 1);
+        
+            r -= RStep;
+            g -= GStep;
+            b -= BStep;
+        }
+    }
 }

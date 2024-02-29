@@ -50,7 +50,7 @@ class Led_Control : public frc2::SubsystemBase {
  private:
  frc::DigitalInput Switch {4};
 
- units::time::second_t Time{0.2};
+ units::time::second_t Time{0.02};
   
  int _r = 255;
  int _g = 0;
@@ -75,6 +75,8 @@ class Led_Control : public frc2::SubsystemBase {
  
   std::vector<int> group4 = {86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111};
  LED_Group ledGroup4 = LED_Group(&candle, group4);
+
+// These are the correct groups:
 
 //  std::vector<int> group3 = {61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78};
 //  LED_Group ledGroup3 = LED_Group(&candle, group3);
