@@ -1,7 +1,6 @@
 // Copyright (c) FIRST and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
-
 #include "subsystems/LED_Groups.h"
 #include <ctre/phoenix/led/Animation.h>
 #include <ctre/phoenix/led/LarsonAnimation.h>
@@ -12,19 +11,21 @@ void LED_Group::SetColor(int _r, int _g, int _b)
 {
     for(int i: _group)
     {
-        _candle->SetLEDs(_r, _g, _b, 0, i, 1);
+        while(_candle->SetLEDs(_r, _g, _b, 0, i, 1)!=ctre::phoenix::OK){}
     }
 }
 
 void LED_Group::SetLarson(int _r, int _g, int _b, int Length)
 {
-    SetColor(0, 0, 0);
-    _candle->SetLEDs(_r, _g, _b, 0, _group[LarsonFront], Length);
-    LarsonFront += 1;
-    if(LarsonFront >= _group.size() - Length)
-    {
-        LarsonFront = 0;
-    }
+    // SetColor(0, 0, 0);
+    // while(_candle->SetLEDs(_r, _g, _b, 0, _group[LarsonFront], Length)!=ctre::phoenix::OK){}
+    // LarsonFront += 1;
+    // if(LarsonFront >= _group.size() - Length)
+    // {
+    //     LarsonFront = 0;
+    // }
+    auto temp = ctre::phoenix::led::LarsonAnimation(_r, _g, _b, 0, 0.5, _group.size(), ctre::phoenix::led::LarsonAnimation::BounceMode::Front, 2, _group[0]);
+    while(_candle->Animate(temp, _slotID) != ctre::phoenix::OK);
 }
 // This method will be called once per scheduler run
 
@@ -58,7 +59,7 @@ void LED_Group::SetFlash(int _r, int _g, int _b, int r, int g, int b, units::tim
     }
 }
 
-void LED_Group::SetGradient(int _r, int _g, int _b, int _R, int _G, int _B, int LedNum)
+void LED_Group::SetGradient(int _r, int _g, int _b, int _R, int _G, int _B)
 {
     int r = _r;
     int g = _g;
@@ -81,13 +82,13 @@ void LED_Group::SetGradient(int _r, int _g, int _b, int _R, int _G, int _B, int 
     _gStep = g - G;
     _bStep = b - B;
 
-    RStep = _rStep/LedNum;
-    GStep = _gStep/LedNum;
-    BStep = _bStep/LedNum;
+    RStep = (_rStep)/(int(_group.size()) - 1);
+    GStep = (_gStep)/(int(_group.size()) - 1);
+    BStep = (_bStep)/(int(_group.size()) - 1);
 
-    for(i = 0; i <= LedNum; i++)
+    for(i = 0; i <= _group.size(); i++)
     {
-        _candle->SetLEDs(r, g, b, 0, i + 8, 1);
+        _candle->SetLEDs(r, g, b, 0, _group[i], 1);
         
         r -= RStep;
         g -= GStep;
@@ -95,50 +96,61 @@ void LED_Group::SetGradient(int _r, int _g, int _b, int _R, int _G, int _B, int 
     }
 }
 
-void LED_Group::SetScrollingGradient(int _r, int _g, int _b, int _R, int _G, int _B, int LedNum)
+void LED_Group::SetScrollingGradient(int _r, int _g, int _b, int _R, int _G, int _B)
 {
-    int a;
-    for(a = 0; a <= LedNum; a++)
+    std::vector<std::vector<int>> gradValues = ComputeGradent(_r, _g, _b, _R, _G, _B);
+
+    for(int i = 0; i <= _group.size(); i++)
     {
-        int r = _r;
-        int g = _g;
-        int b = _b;
-        int R = _R;
-        int G = _G;
-        int B = _B;
-
-        int _rStep;
-        int _gStep;
-        int _bStep;
-
-        int RStep;
-        int GStep;
-        int BStep;
-
-        int i;
-
-        _rStep = r - R;
-        _gStep = g - G;
-        _bStep = b - B;
-
-        RStep = _rStep/LedNum;
-        GStep = _gStep/LedNum;
-        BStep = _bStep/LedNum;
-
-        if(i >= LedNum)
-        {
-            Offset += 1;
-            r = (RStep * Offset) + r;
-            frc::SmartDashboard::PutBoolean("TEST", true);
-        }
-
-        for(i = 0; i <= LedNum; i++)
-        {
-            _candle->SetLEDs(r, g, b, 0, i + 8, 1);
-        
-            r -= RStep;
-            g -= GStep;
-            b -= BStep;
-        }
+        int idx = (i+_start)%gradValues.size();
+        _candle->SetLEDs(gradValues[idx][0], gradValues[idx][1], gradValues[idx][2], 0, _group[i], 1);
     }
+    _start++;
+}
+
+std::vector<std::vector<int>> LED_Group::ComputeGradent(int _r, int _g, int _b, int _R, int _G, int _B)
+{
+    int r = _r;
+    int g = _g;
+    int b = _b;
+    int R = _R;
+    int G = _G;
+    int B = _B;
+
+    int _rStep;
+    int _gStep;
+    int _bStep;
+
+    int RStep;
+    int GStep;
+    int BStep;
+
+    std::vector<std::vector<int>> gradValues;
+
+    _rStep = r - R;
+    _gStep = g - G;
+    _bStep = b - B;
+
+    RStep = (_rStep)/(int(_group.size()));
+    GStep = (_gStep)/(int(_group.size()));
+    BStep = (_bStep)/(int(_group.size()));
+
+    for(int i = 0; i <= _group.size(); i++)
+    {
+        gradValues.push_back({r, g, b});
+        r -= RStep;
+        g -= GStep;
+        b -= BStep;
+    }
+
+    for(int i = _group.size(); i <= _group.size()*2; i++)
+    {
+        gradValues.push_back({r, g, b});
+        
+        r += RStep;
+        g += GStep;
+        b += BStep;
+    }
+
+    return gradValues;
 }

@@ -7,7 +7,9 @@
 
 Led_Control::Led_Control() 
 {
-    // Setup i vectors ie. {1-10, 20-30}, {11-19, 31-40}
+    candle.ConfigLEDType(ctre::phoenix::led::LEDStripType::GRB);
+    candle.SetLEDs(0, 0, 0);
+
 }
 
 
@@ -71,12 +73,17 @@ void Led_Control::HandleShooterState(){
         break;
 
     case SHOOTING:
-        // ledGroup1.SetLarson(255, 30, 0, 3);
-        // ledGroup2.SetLarson(255, 30, 0, 3);
+        ledGroup1.SetLarson(255, 30, 0, 4);
+        ledGroup2.SetLarson(255, 30, 0, 3);
         // ledGroup3.SetLarson(255, 30, 0, 3);
-        // ledGroup4.SetLarson(255, 30, 0, 3);
-        // ledGroup4.SetFlash(255,255,255,0,0,0,Time);
-        ledGroup1.SetScrollingGradient(255, 100, 0, 0, 100, 255, 25);
+        ledGroup4.SetLarson(255, 30, 0, 3);
+        ledGroup5.SetLarson(255, 30, 0, 3);
+        ledGroup3.SetFlash(255,255,255,0,0,0,Time);
+        // ledGroup1.SetScrollingGradient(0, 255, 0, 0, 0, 255);
+        // ledGroup2.SetScrollingGradient(0, 255, 0, 0, 0, 255);
+        // ledGroup3.SetScrollingGradient(0, 255, 0, 0, 0, 255);
+        // ledGroup4.SetScrollingGradient(0, 255, 0, 0, 0, 255);
+        // ledGroup5.SetScrollingGradient(0, 255, 0, 0, 0, 255);
         break;
     case BAD:
         AllLEDs.SetFlash(255, 0, 0, 255, 30, 0, Time);

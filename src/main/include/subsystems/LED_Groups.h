@@ -11,20 +11,20 @@
 
 class LED_Group{
  public:
-  LED_Group(ctre::phoenix::led::CANdle* candle, std::vector<int> group) :
+  LED_Group(ctre::phoenix::led::CANdle* candle, std::vector<int> group, int slotID) :
          _candle(candle),
-         _group(group) {
-
-          _candle->ConfigLEDType(ctre::phoenix::led::LEDStripType::GRB);
-          
+         _group(group),
+         _slotID(slotID)
+         {          
          }
   
   void SetColor(int _r, int _g, int _b);
   void SetLarson(int _r, int _g, int _b, int Length);
   void SetDisco(int _r, int _g, int _b);
   void SetFlash(int _r, int _g, int _b, int _R, int _G, int _B, units::time::second_t Period);
-  void SetGradient(int _r, int _g, int _b, int r, int g, int b, int LedNum);
-  void SetScrollingGradient(int _r, int _g, int _b, int r, int g, int b, int LedNum);
+  void SetGradient(int _r, int _g, int _b, int r, int g, int b);
+  void SetScrollingGradient(int _r, int _g, int _b, int r, int g, int b);
+  std::vector<std::vector<int>> ComputeGradent(int _r, int _g, int _b, int _R, int _G, int _B);
     /**
    * Will be called periodically whenever the CommandScheduler runs.
    */
@@ -39,9 +39,10 @@ class LED_Group{
   int StepR;
   int StepG;
   int StepB;
-  int Offset = 1;
+  int Offset = 8;
   int ROffset;
-
+  int _start = 0;
+  int _slotID = 0;
   bool _status = false;
 
   frc::Timer _timer;
